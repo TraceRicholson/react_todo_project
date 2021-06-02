@@ -10,10 +10,10 @@ class App extends Component {
   render() {
     return (
       <>
-        <Container maxWidth="sm">
+        <Container maxWidth="lg">
           <Username />
           <TaskList />
-          <Paper />
+
         </Container>
 
       </>
