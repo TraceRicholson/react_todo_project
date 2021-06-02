@@ -1,11 +1,15 @@
-import {Component} from 'react'
+import { Component } from 'react'
 import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+
+
 
 class TaskList extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
-    this.state = { inputValue: []}
+    this.state = { inputValue: [] }
 
 
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -22,27 +26,27 @@ class TaskList extends Component {
 
   deleteListItem(event, index) {
     let array = [...this.state.inputValue]
-    array.splice(index,1)
-    this.setState({inputValue: array})
+    array.splice(index, 1)
+    this.setState({ inputValue: array })
   }
 
   finishAll() {
-    this.setState({inputValue: []})
+    this.setState({ inputValue: [] })
   }
 
-  render () {
+  render() {
     let itemList = this.state.inputValue.map((item, index) => <li key={index} onClick={(event) => this.deleteListItem(event, index)}>{item}</li>)
-     return (
-    <>
+    return (
+      <>
 
-      <label htmlFor="addItem">Add Item:</label>
-      <input type="text" name="addItem" onKeyPress={this.onKeyUp}/>
-      <ul>
-        {itemList}
-      </ul>
-      <div>Finish all tasks?</div>
-        <Button color="primary" onClick={this.finishAll}>Finish All!</Button>
-    </>
+        <label htmlFor="addItem">Add Item:</label>
+        <input type="text" name="addItem" onKeyPress={this.onKeyUp} />
+        <ul>
+          {itemList}
+        </ul>
+        <div>Finish all tasks?</div>
+        <Button variant="contained" color="primary" onClick={this.finishAll}>Finish All!</Button>
+      </>
     );
   }
 }
