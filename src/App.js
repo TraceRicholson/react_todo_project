@@ -1,28 +1,19 @@
-
 import './App.css';
 import {Component} from 'react'
+import { Button } from '@material-ui/core';
+import Username from './Components/Username'
 
 class App extends Component {
 
   constructor (props) {
     super(props)
-    this.state = {username: '', newUsername: '', inputValue: []}
+    this.state = {inputValue: []}
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
     this.deleteListItem = this.deleteListItem.bind(this);
     this.finishAll = this.finishAll.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({username: event.target.value});
-  }
-
-  handleSubmit(event) {
-    this.setState({newUsername: this.state.username})
-    event.preventDefault();
-  }
 
   onKeyUp(event) {
     if (event.charCode === 13) {
@@ -44,21 +35,15 @@ class App extends Component {
     let itemList = this.state.inputValue.map((item, index) => <li key={index} onClick={(event) => this.deleteListItem(event, index)}>{item}</li>)
      return (
     <>
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Username:
-          <input type="text"  name="username" value={this.state.username} onChange={this.handleChange}/>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-      <h1>Welcome, {this.state.newUsername}!</h1>
+      <Username/>
+
       <label htmlFor="addItem">Add Item:</label>
       <input type="text" name="addItem" onKeyPress={this.onKeyUp}/>
       <ul>
         {itemList}
       </ul>
       <div>Finish all tasks?</div>
-        <button onClick={this.finishAll}>Finish All</button>
+        <Button color="primary" onClick={this.finishAll}>Finish All!</Button>
     </>
     );
   }
