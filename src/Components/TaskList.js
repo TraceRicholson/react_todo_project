@@ -4,13 +4,24 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useState } from 'react'
 import firebase from "firebase/app";
+import { firestore } from '../Firebase/firebase';
 import 'firebase/firestore';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
+import { AddAlarmOutlined } from '@material-ui/icons';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+
 
 const useStyles = makeStyles((theme) => ({
+
+
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   root: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -21,6 +32,15 @@ const useStyles = makeStyles((theme) => ({
     },
 
   },
+
+  container: {
+    display: 'flex',
+  },
+
+  paper: {
+    margin: theme.spacing(1),
+  },
+
   paperBackground: {
     display: 'flex',
     justifyContent: 'center',
@@ -30,18 +50,16 @@ const useStyles = makeStyles((theme) => ({
     color: 'black',
     backgroundColor: '#ffecb3',
     border: 0,
-    paddingTop: 0
+    paddingTop: 0,
   },
 }));
 
-function TaskList() {
-  // let db = firebase.firestore();
+function TaskList(props) {
   const classes = useStyles();
   const [inputValue, setInputValue] = useState([])
+  console.log("this is the input value", inputValue)
   const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState('')
-  const [newUsername, setNewUsername] = useState('')
-
+  let db = firestore.collection("users")
 
 
   const handleOpen = () => {
@@ -52,19 +70,15 @@ function TaskList() {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    handleClose()
-  }
-
-  const onKeyUp = (event) => {
+  const onKeyUp = async (event) => {
     if (event.charCode === 13) {
       let array = [...inputValue]
       array.push(event.target.value)
       setInputValue(array);
 
-      // db.collection("users").doc().add({
-      //   first: "Jacob",
-      //   tasks: [],
+      // console.log("username on task list", props.user)
+      // await db.doc(props.user).update({
+      //   tasks: firebase.firestore.FieldValue.arrayUnion(event.target.value),
       // })
       //   .then((docRef) => {
       //     console.log("Document written with ID: ", docRef.id);
@@ -72,10 +86,12 @@ function TaskList() {
       //   .catch((error) => {
       //     console.error("Error adding document: ", error);
       //   });
+
+
     }
   }
 
-  const deleteListItem = (event, index) => {
+  const deleteListItem = async (event, index) => {
     let array = [...inputValue]
     array.splice(index, 1)
     setInputValue(array)
@@ -92,11 +108,13 @@ function TaskList() {
   let itemList = inputValue.map((item, index) => <Paper elevation={3} className={classes.paperBackground} key={index} onClick={(event) => deleteListItem(event, index)}>{item}</Paper>)
   return (
     <>
+
       <label htmlFor="addItem">Add Item:</label>
       <input type="text" name="addItem" onKeyPress={onKeyUp} />
       <div className={classes.root}>
         {itemList}
       </div>
+
       <div>Finish all tasks?</div>
 
       <Button variant="contained" color="primary" onClick={finishAll}>Finish All!</Button>

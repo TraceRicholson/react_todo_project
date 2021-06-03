@@ -1,0 +1,7 @@
+.fontlink {
+  font-family: "IndieFlower";
+  src: local("IndieFlower"),
+   url("/src/Fonts/IndieFlower-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }
+  
