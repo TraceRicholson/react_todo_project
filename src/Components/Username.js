@@ -1,4 +1,4 @@
-import { useState, useEffect, setState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -10,19 +10,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import '../Styles/Username.css'
 import TextField from '@material-ui/core/TextField';
-import firebase from "firebase/app";
-import 'firebase/firestore';
-
-firebase.initializeApp({
-  apiKey: "AIzaSyBprxSwqar_kJT-O934XIhbg8YcQ01g5Kw",
-  authDomain: "socal-golf-tour-2cf45.firebaseapp.com",
-  databaseURL: "https://socal-golf-tour-2cf45-default-rtdb.firebaseio.com",
-  projectId: "socal-golf-tour-2cf45",
-  storageBucket: "socal-golf-tour-2cf45.appspot.com",
-  messagingSenderId: "485371547044",
-  appId: "1:485371547044:web:ecc692dab4ddbbf03cc531"
-});
-
+import { firestore } from '../Firebase/firebase';
+import TaskList from './TaskList';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -51,11 +40,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Username(key, defaultValue) {
-  let db = firebase.firestore();
+  let db = firestore.collection("users")
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState('')
   const [newUsername, setNewUsername] = useState('')
+  const [tasks, setUserTasks] = useState([])
 
 
 
@@ -71,20 +61,30 @@ function Username(key, defaultValue) {
     setUsername(event.target.value);
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     setNewUsername(username)
     handleClose()
     event.preventDefault();
-    db.collection("users").doc(username).set({
-      first: username,
-      tasks: [],
+    await db.doc(username).get().then(function (doc) {
+      if (doc.exists) {
+        console.log("returning user")
+        console.log("the data", doc.data().tasks)
+        setUserTasks(doc.data().tasks)
+      } else {
+        console.log("new sign on")
+        db.doc(username).set({
+          first: username,
+          tasks: [],
+        })
+          .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch((error) => {
+            console.error("Error adding document: ", error);
+          });
+      }
     })
-      .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
+
   }
 
   const handleLogout = (event) => {
@@ -137,7 +137,7 @@ function Username(key, defaultValue) {
 
 
       {newUsername === '' ? <h1 id="welcome-header">Welcome New User!!</h1> : <h1 id="welcome-header" className="myUserna">Welcome, {newUsername}!</h1>}
-
+      <TaskList user={newUsername} tasks={tasks} />
     </>
 
 
